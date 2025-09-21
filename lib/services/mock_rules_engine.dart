@@ -10,17 +10,16 @@ class MockRulesEngine {
   Future<bool> shouldShowSafetyModal(List<Map<String, dynamic>> messages) async {
     final chatResponses = await _loadChatResponses();
     final highRiskResponses = chatResponses['high_risk'] as List;
-    final highRiskMessages = highRiskResponses.map((e) => e['message'] as String).toList();
+    final presentSymptomFlags = messages
+        .where((m) => m['symptom_flag'] != null)
+        .map((m) => m['symptom_flag'] as String)
+        .toSet();
 
-    final presentSymptoms = messages
-        .where((m) => !m['isUser'] && highRiskMessages.contains(m['text']))
-        .length;
-
-    final totalSymptoms = 4; // As per the number of high_risk messages
+    final totalSymptoms = highRiskResponses.length;
 
     if (totalSymptoms == 0) return false;
 
-    final ratio = presentSymptoms / totalSymptoms;
+    final ratio = presentSymptomFlags.length / totalSymptoms;
 
     return ratio >= 0.7;
   }

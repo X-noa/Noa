@@ -15,6 +15,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   double _currentPage = 0.0;
   final MicrocopyService _microcopyService = MicrocopyService();
   bool _microcopyLoaded = false;
+  bool _cloudBackupEnabled = false;
 
   @override
   void initState() {
@@ -140,8 +141,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildSlide3() {
-    // TODO: Implement state management for the toggle
-    // TODO: Implement saving to local storage
     return Container(
       padding: const EdgeInsets.all(NoaTheme.spacing32),
       child: Column(
@@ -160,17 +159,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Enable cloud backup', style: NoaTheme.body),
-              Switch(value: false, onChanged: (value) {
-                // TODO: Handle state change
-              }),
+              Switch(
+                value: _cloudBackupEnabled,
+                onChanged: (value) {
+                  setState(() {
+                    _cloudBackupEnabled = value;
+                  });
+                },
+                activeColor: NoaTheme.primary,
+              ),
             ],
           ),
           const Spacer(),
           PrimaryButton(
             onPressed: () {
-              // TODO: Save preference and navigate to home screen
-              // For now, just print to console
-              print('Onboarding complete');
+              // TODO: Save preference to local storage
+              print('Cloud backup enabled: $_cloudBackupEnabled');
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ));
             },
             text: 'Continue - local only',
           ),

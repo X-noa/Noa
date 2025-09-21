@@ -4,6 +4,7 @@ import 'package:noa/screens/mood_history_screen.dart';
 import 'package:noa/services/microcopy_service.dart';
 import 'package:noa/theme/noa_theme.dart';
 import 'package:noa/widgets/activity_card.dart';
+import 'package:noa/screens/chat_screen.dart';
 import 'package:noa/widgets/mood_logger.dart';
 import 'package:noa/widgets/noa_app_bar.dart';
 import 'package:noa/widgets/noa_card.dart';
@@ -125,7 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to chat screen
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const ChatScreen(),
+          ));
         },
         backgroundColor: NoaTheme.primary,
         child: const Icon(Icons.chat_bubble_outline),

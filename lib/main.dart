@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:noa/screens/notifications_screen.dart';
+import 'package:noa/screens/onboarding_page.dart';
 import 'package:noa/theme/noa_theme.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Noa',
       theme: NoaTheme.themeData,
-      home: const NotificationsScreen(),
+      home: const OnboardingPage(),
     );
   }
 }

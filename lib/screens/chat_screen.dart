@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:noa/services/microcopy_service.dart';
 import 'package:noa/services/mock_rules_engine.dart';
 import 'package:noa/theme/noa_theme.dart';
@@ -19,15 +22,18 @@ class _ChatScreenState extends State<ChatScreen> {
   final MockRulesEngine _rulesEngine = MockRulesEngine();
   final MicrocopyService _microcopyService = MicrocopyService();
   bool _microcopyLoaded = false;
+  late Map<String, dynamic> _chatResponses;
 
   @override
   void initState() {
     super.initState();
-    _loadMicrocopy();
+    _loadData();
   }
 
-  Future<void> _loadMicrocopy() async {
+  Future<void> _loadData() async {
     await _microcopyService.load();
+    final jsonString = await rootBundle.loadString('mock/chat_responses.json');
+    _chatResponses = json.decode(jsonString);
     setState(() {
       _microcopyLoaded = true;
       _messages.add(
@@ -44,22 +50,27 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Mock Noa's response
     Future.delayed(const Duration(seconds: 1), () {
+      final responses = _chatResponses['supportive'] as List;
+      final response = responses[DateTime.now().millisecond % responses.length];
       setState(() {
-        _messages.add({
-          'text': "I'm really worried about what you're saying. It sounds like you're in a lot of pain.",
-          'isUser': false
-        });
-        _messages.add({
-          'text': "The way you're describing things makes me concerned for your safety.",
-          'isUser': false
-        });
-        _messages.add({
-          'text': "It sounds like you're feeling completely overwhelmed and alone right now.",
-          'isUser': false
-        });
+        _messages.add({'text': response, 'isUser': false});
       });
       _checkSafetyModal();
     });
+  }
+
+  void _triggerSafetyModal() {
+    setState(() {
+      final highRiskResponses = _chatResponses['high_risk'] as List;
+      for (var response in highRiskResponses) {
+        _messages.add({
+          'text': response['message'],
+          'isUser': false,
+          'symptom_flag': response['symptom_flag'],
+        });
+      }
+    });
+    _checkSafetyModal();
   }
 
   void _checkSafetyModal() async {
@@ -82,8 +93,14 @@ class _ChatScreenState extends State<ChatScreen> {
       );
     }
     return Scaffold(
-      appBar: const NoaAppBar(
+      appBar: NoaAppBar(
         title: 'Chat with Noa',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.warning),
+            onPressed: _triggerSafetyModal,
+          ),
+        ],
       ),
       body: Column(
         children: [

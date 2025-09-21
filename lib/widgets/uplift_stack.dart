@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:noa/theme/noa_theme.dart';
 import 'package:noa/widgets/noa_card.dart';
 
@@ -10,45 +12,69 @@ class UpliftStack extends StatefulWidget {
 }
 
 class _UpliftStackState extends State<UpliftStack> {
-  // TODO: Load jokes from mock/jokes.json
-  final List<String> _jokes = [
-    "Why don't scientists trust atoms? Because they make up everything!",
-    "I'm reading a book on anti-gravity. It's impossible to put down!",
-    "What do you call a fake noodle? An Impasta.",
-  ];
+  List<String> _jokes = [];
   int _currentIndex = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadJokes();
+  }
+
+  Future<void> _loadJokes() async {
+    final jsonString = await rootBundle.loadString('mock/jokes.json');
+    final jsonResponse = json.decode(jsonString) as List;
+    setState(() {
+      _jokes = jsonResponse.map((e) => e['text'] as String).toList();
+      _isLoading = false;
+    });
+  }
+
+  void _nextJoke() {
+    setState(() {
+      _currentIndex = (_currentIndex + 1) % _jokes.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Center(
-      child: NoaCard(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              _jokes[_currentIndex],
-              style: NoaTheme.h3,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: NoaTheme.spacing32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    // TODO: Implement favorite
-                  },
-                  icon: const Icon(Icons.favorite_border),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // TODO: Implement share
-                  },
-                  icon: const Icon(Icons.share),
-                ),
-              ],
-            )
-          ],
+      child: GestureDetector(
+        onTap: _nextJoke,
+        child: NoaCard(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _jokes[_currentIndex],
+                style: NoaTheme.h3,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: NoaTheme.spacing32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement favorite
+                    },
+                    icon: const Icon(Icons.favorite_border),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement share
+                    },
+                    icon: const Icon(Icons.share),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
