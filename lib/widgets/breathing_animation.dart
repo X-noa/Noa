@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:noa/theme/noa_theme.dart';
 
 class BreathingAnimation extends StatefulWidget {
@@ -9,11 +8,11 @@ class BreathingAnimation extends StatefulWidget {
   State<BreathingAnimation> createState() => _BreathingAnimationState();
 }
 
-class _BreathingAnimationState extends State<BreathingAnimation>
-    with SingleTickerProviderStateMixin {
+class _BreathingAnimationState extends State<BreathingAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _radiusAnimation;
+  late Animation<double> _sizeAnimation;
   late Animation<Color?> _colorAnimation;
+  String _breathStateText = 'Inhale';
 
   @override
   void initState() {
@@ -23,14 +22,23 @@ class _BreathingAnimationState extends State<BreathingAnimation>
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    _radiusAnimation = Tween<double>(begin: 40, end: 100).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    final curvedAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _sizeAnimation = Tween<double>(begin: 150, end: 250).animate(curvedAnimation);
 
     _colorAnimation = ColorTween(
       begin: NoaTheme.primary,
       end: NoaTheme.secondary,
-    ).animate(_controller);
+    ).animate(curvedAnimation);
+
+    _controller.addStatusListener((status) {
+      if (!mounted) return;
+      if (status == AnimationStatus.forward) {
+        setState(() => _breathStateText = 'Inhale');
+      } else if (status == AnimationStatus.reverse) {
+        setState(() => _breathStateText = 'Exhale');
+      }
+    });
   }
 
   @override
@@ -45,16 +53,23 @@ class _BreathingAnimationState extends State<BreathingAnimation>
       animation: _controller,
       builder: (context, child) {
         return Container(
-          width: _radiusAnimation.value * 2,
-          height: _radiusAnimation.value * 2,
+          width: _sizeAnimation.value,
+          height: _sizeAnimation.value,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _colorAnimation.value,
           ),
           child: Center(
-            child: Text(
-              _controller.status == AnimationStatus.forward ? 'Inhale' : 'Exhale',
-              style: NoaTheme.body.copyWith(color: Colors.white),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Text(
+                _breathStateText,
+                key: ValueKey<String>(_breathStateText),
+                style: NoaTheme.h3.copyWith(color: Colors.white),
+              ),
             ),
           ),
         );

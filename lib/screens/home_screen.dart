@@ -17,21 +17,87 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final MicrocopyService _microcopyService = MicrocopyService();
   bool _microcopyLoaded = false;
+
+  late AnimationController _entranceController;
+  late AnimationController _fabController;
+  late AnimationController _moodController;
+  late Animation<double> _fabAnimation;
+  late Animation<Color?> _moodColorAnimation;
+  late Animation<double> _moodLiftAnimation;
+  List<Animation<double>> _activityCardAnimations = [];
+
+  // Mock data for activities
+  final List<Map<String, String>> _activities = [
+    {'title': 'Mindful Breathing', 'duration': '2 min', 'benefit': 'Calm your mind'},
+    {'title': 'Quick Stretch', 'duration': '3 min', 'benefit': 'Energize your body'},
+    {'title': 'Jot Down a Thought', 'duration': '5 min', 'benefit': 'Clear your head'},
+  ];
 
   @override
   void initState() {
     super.initState();
     _loadMicrocopy();
+
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500 + (60 * _activities.length)),
+    );
+
+    for (int i = 0; i < _activities.length; i++) {
+      _activityCardAnimations.add(
+        Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: Interval(
+              (i * 60) / _entranceController.duration!.inMilliseconds,
+              (500 + i * 60) / _entranceController.duration!.inMilliseconds,
+              curve: Curves.easeOut,
+            ),
+          ),
+        ),
+      );
+    }
+
+    _fabController = AnimationController(
+      vsync: this,
+      duration: NoaMotion.microPress,
+    );
+
+    _fabAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(_fabController);
+
+    _moodController = AnimationController(
+        duration: const Duration(milliseconds: 320), vsync: this);
+
+    _moodColorAnimation = ColorTween(
+      begin: NoaTheme.neutralSurface, // Default card color
+      end: NoaTheme.secondary.withOpacity(0.3), // New mood color
+    ).animate(_moodController);
+
+    _moodLiftAnimation = Tween<double>(begin: 0.0, end: -6.0).animate(
+      CurvedAnimation(parent: _moodController, curve: Curves.easeInOut),
+    );
+
+    _entranceController.forward();
   }
 
   Future<void> _loadMicrocopy() async {
     await _microcopyService.load();
-    setState(() {
-      _microcopyLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _microcopyLoaded = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    _fabController.dispose();
+    _moodController.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,7 +121,17 @@ class _HomeScreenState extends State<HomeScreen> {
             const Text('Good morning,', style: NoaTheme.h2),
             const Text('How are you feeling today?', style: NoaTheme.body),
             const SizedBox(height: NoaTheme.spacing32),
-            NoaCard(
+            AnimatedBuilder(
+              animation: _moodController,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, _moodLiftAnimation.value),
+                  child: NoaCard(
+                    color: _moodColorAnimation.value,
+                    child: child,
+                  ),
+                );
+              },
               child: Row(
                 children: [
                   const Text('😊', style: TextStyle(fontSize: 48)),
@@ -71,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     onPressed: () {
+                      // Trigger animation and open logger
+                      _moodController.forward().then((_) => _moodController.reverse());
                       _showMoodLogger(context);
                     },
                     icon: const Icon(Icons.arrow_forward_ios),
@@ -83,26 +161,34 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: NoaTheme.spacing16),
             SizedBox(
               height: 220,
-              child: ListView(
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                children: [
-                  ActivityCard(
-                    title: 'Mindful Breathing',
-                    duration: '2 min',
-                    benefit: 'Calm your mind',
-                    onStart: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ActivityPlayerScreen(),
-                      ));
+                itemCount: _activities.length,
+                itemBuilder: (context, index) {
+                  final activity = _activities[index];
+                  return AnimatedBuilder(
+                    animation: _activityCardAnimations[index],
+                    builder: (context, child) {
+                      return FadeTransition(
+                        opacity: _activityCardAnimations[index],
+                        child: Transform.translate(
+                          offset: Offset(0, 30 * (1 - _activityCardAnimations[index].value)),
+                          child: child,
+                        ),
+                      );
                     },
-                  ),
-                  ActivityCard(
-                    title: 'Quick Stretch',
-                    duration: '3 min',
-                    benefit: 'Energize your body',
-                    onStart: () {},
-                  ),
-                ],
+                    child: ActivityCard(
+                      title: activity['title']!,
+                      duration: activity['duration']!,
+                      benefit: activity['benefit']!,
+                      onStart: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ActivityPlayerScreen(),
+                        ));
+                      },
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: NoaTheme.spacing32),
@@ -129,14 +215,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const ChatScreen(),
-          ));
-        },
-        backgroundColor: NoaTheme.primary,
-        child: const Icon(Icons.chat_bubble_outline),
+      floatingActionButton: ScaleTransition(
+        scale: _fabAnimation,
+        child: FloatingActionButton(
+          onPressed: () {
+             _fabController.forward().then((_) {
+              _fabController.reverse();
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ChatScreen(),
+              ));
+            });
+          },
+          backgroundColor: NoaTheme.primary,
+          child: const Icon(Icons.chat_bubble_outline),
+        ),
       ),
     );
   }
