@@ -1,0 +1,20 @@
+[
+  {
+    "id": "activity_001",
+    "title": "Mindful Breathing",
+    "duration": "2 min",
+    "benefit": "Calm your mind"
+  },
+  {
+    "id": "activity_002",
+    "title": "Quick Stretch",
+    "duration": "3 min",
+    "benefit": "Energize your body"
+  },
+  {
+    "id": "activity_003",
+    "title": "Gratitude Journal",
+    "duration": "5 min",
+    "benefit": "Focus on the positive"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "resource_001",
+    "title": "National Crisis and Suicide Lifeline",
+    "phone": "988",
+    "description": "24/7, free and confidential support for people in distress."
+  },
+  {
+    "id": "resource_002",
+    "title": "Crisis Text Line",
+    "phone": "text HOME to 741741",
+    "description": "Text with a trained crisis counselor from anywhere in the US."
+  }
+]

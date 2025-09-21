@@ -1,0 +1,20 @@
+[
+  {
+    "date": "2025-09-20",
+    "mood_score": 4,
+    "journal_snippet": "Felt pretty good today. The sun was out.",
+    "activities": ["activity_002"]
+  },
+  {
+    "date": "2025-09-19",
+    "mood_score": 2,
+    "journal_snippet": "A bit down today. Work was stressful.",
+    "activities": ["activity_001"]
+  },
+  {
+    "date": "2025-09-18",
+    "mood_score": 5,
+    "journal_snippet": "Feeling great! Had a nice chat with a friend.",
+    "activities": []
+  }
+]
