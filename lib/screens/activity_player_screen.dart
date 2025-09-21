@@ -30,7 +30,9 @@ class ActivityPlayerScreen extends StatelessWidget {
               padding: const EdgeInsets.all(NoaTheme.spacing32),
               child: PrimaryButton(
                 onPressed: () {
-                  // TODO: Show completion animation and save to mood history
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Activity complete! (mocked)')),
+                  );
                   Navigator.of(context).pop();
                 },
                 text: 'Complete',

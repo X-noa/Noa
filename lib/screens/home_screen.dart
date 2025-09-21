@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noa/screens/activity_player_screen.dart';
 import 'package:noa/screens/mood_history_screen.dart';
+import 'package:noa/screens/uplift_screen.dart';
 import 'package:noa/services/microcopy_service.dart';
 import 'package:noa/theme/noa_theme.dart';
 import 'package:noa/widgets/activity_card.dart';
@@ -110,7 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildQuickAction(context, Icons.sentiment_very_satisfied, 'Joke', () {}),
+                _buildQuickAction(context, Icons.sentiment_very_satisfied, 'Joke', () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const UpliftScreen(),
+                  ));
+                }),
                 _buildQuickAction(context, Icons.edit, 'Log mood', () {
                   _showMoodLogger(context);
                 }),
