@@ -1,0 +1,41 @@
+{
+  "neutral": [
+    "I'm here to listen. How are you feeling?",
+    "Tell me more about what's on your mind.",
+    "I see. Can you elaborate on that?",
+    "That sounds interesting. What happened next?"
+  ],
+  "supportive": [
+    "It sounds like you're going through a lot. I'm here for you.",
+    "That's completely understandable. It's okay to feel that way.",
+    "Remember to be kind to yourself. You're doing your best.",
+    "I'm sending you warmth and support."
+  ],
+  "low_mood": [
+    "It seems like you're feeling down. Would you like to try a short activity together?",
+    "I'm sorry to hear that. Sometimes a small exercise can help lift the spirits. Interested?",
+    "I've noticed you seem a bit low. I have a breathing exercise that might help, would you like to try it?"
+  ],
+  "high_risk": [
+    {
+      "message": "I'm really worried about what you're saying. It sounds like you're in a lot of pain.",
+      "symptom_flag": "hopelessness"
+    },
+    {
+      "message": "The way you're describing things makes me concerned for your safety.",
+      "symptom_flag": "self_harm_ideation"
+    },
+    {
+      "message": "It sounds like you're feeling completely overwhelmed and alone right now.",
+      "symptom_flag": "isolation"
+    },
+    {
+        "message": "I am worried about you. This is very serious. I think we need to get help.",
+        "symptom_flag": "suicidal_ideation"
+    }
+  ],
+  "error": [
+    "I'm having a little trouble connecting right now. Please try again in a moment.",
+    "Oops, something went wrong on my end. Let's try that again."
+  ]
+}

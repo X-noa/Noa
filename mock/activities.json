@@ -1,0 +1,22 @@
+[
+  {"id": "activity_001", "title": "Mindful Breathing", "duration": "2 min", "benefit": "Calm your mind"},
+  {"id": "activity_002", "title": "Quick Stretch", "duration": "3 min", "benefit": "Energize your body"},
+  {"id": "activity_003", "title": "Gratitude Journal", "duration": "5 min", "benefit": "Focus on the positive"},
+  {"id": "activity_004", "title": "5-4-3-2-1 Grounding", "duration": "4 min", "benefit": "Anchor in the present"},
+  {"id": "activity_005", "title": "Listen to a Song", "duration": "3 min", "benefit": "Lift your spirits"},
+  {"id": "activity_006", "title": "Body Scan", "duration": "5 min", "benefit": "Release tension"},
+  {"id": "activity_007", "title": "Positive Affirmations", "duration": "2 min", "benefit": "Boost self-esteem"},
+  {"id": "activity_008", "title": "Doodle Something", "duration": "5 min", "benefit": "Express creativity"},
+  {"id": "activity_009", "title": "Mindful Walking", "duration": "10 min", "benefit": "Connect with nature"},
+  {"id": "activity_010", "title": "Tense and Release", "duration": "4 min", "benefit": "Relax your muscles"},
+  {"id": "activity_011", "title": "Visualize a Safe Space", "duration": "5 min", "benefit": "Find inner peace"},
+  {"id": "activity_012", "title": "Write a Positive Memory", "duration": "5 min", "benefit": "Recall happy moments"},
+  {"id": "activity_013", "title": "Count to Ten", "duration": "1 min", "benefit": "Reset your focus"},
+  {"id": "activity_014", "title": "Sip a Warm Drink", "duration": "5 min", "benefit": "Soothe and comfort"},
+  {"id": "activity_015", "title": "Watch a Funny Video", "duration": "3 min", "benefit": "Have a quick laugh"},
+  {"id": "activity_016", "title": "Name 3 Good Things", "duration": "2 min", "benefit": "Cultivate positivity"},
+  {"id": "activity_017", "title": "Mindful Listening", "duration": "4 min", "benefit": "Sharpen your focus"},
+  {"id": "activity_018", "title": "Plan Something Fun", "duration": "5 min", "benefit": "Look forward to joy"},
+  {"id": "activity_019", "title": "Unfollow a Negative Account", "duration": "1 min", "benefit": "Curate your feed"},
+  {"id": "activity_020", "title": "Compliment a Friend", "duration": "2 min", "benefit": "Spread kindness"}
+]
